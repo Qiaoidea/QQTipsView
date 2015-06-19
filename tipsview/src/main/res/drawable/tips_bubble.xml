@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable="@drawable/tips_bubble_idp" android:duration="300"/>
+    <item android:drawable="@drawable/tips_bubble_idq" android:duration="300"/>
+    <item android:drawable="@drawable/tips_bubble_idr" android:duration="300"/>
+    <item android:drawable="@drawable/tips_bubble_ids" android:duration="300"/>
+    <item android:drawable="@drawable/tips_bubble_idt" android:duration="300"/>
+    <item android:drawable="@android:color/transparent" android:duration="300"/>
+</animation-list>

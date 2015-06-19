@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TabItemView">
+        <attr name="icon" format="reference"/>
+        <attr name="color" format="color"/>
+        <attr name="text" format="string"/>
+        <attr name="text_size" format="dimension"/>
+    </declare-styleable>
+</resources>
