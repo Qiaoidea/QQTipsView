@@ -1,4 +1,4 @@
-package activity;
+package code.qiao.com.demo.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import android.widget.TextView;
 /**
  * Created by bingosoft on 15/6/18.
  */
-public class TabFragment extends Fragment{
-    private String mTitle = "Default";
+public class TabFragment extends Fragment {
+    private String mTitle = "TabFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

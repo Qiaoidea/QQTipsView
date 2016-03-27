@@ -3,10 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/QQTipsView.iml" filepath="$PROJECT_DIR$/QQTipsView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/actionsheet/actionsheet.iml" filepath="$PROJECT_DIR$/actionsheet/actionsheet.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/tipsview/tipsview.iml" filepath="$PROJECT_DIR$/tipsview/tipsview.iml" />
     </modules>
   </component>
 </project>
-

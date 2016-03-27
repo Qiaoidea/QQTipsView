@@ -1,5 +1,6 @@
 package code.qiao.com.tipsview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,11 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 
 public class TipsView extends FrameLayout {
 
-    public static final float DEFAULT_RADIUS = 20;
+    public static final float DEFAULT_RADIUS = 25;
 
     private Paint paint;
     private Path path;
@@ -26,38 +28,45 @@ public class TipsView extends FrameLayout {
     float x = 0;
     float y = 0;
 
+    /**
+     * 锚点位置
+     */
     float anchorX = 0;
     float anchorY = 0;
 
     float startX = 500;
     float startY = 100;
 
-    float thisX = 0;
-    float thisY = 0;
+    /**
+     * 在屏幕中的位置
+     */
+    float locationX = 0;
+    float locationY = 0;
 
     float radius = DEFAULT_RADIUS;
 
-    boolean isTrigger, isTouch;
+    boolean isTrigger; //是否断开
+    boolean  isTouch;  //是否正在触摸
 
     ImageView exploredImageView;
     View tipImageView;
 
     public TipsView(Context context) {
         super(context);
-        init();
+        initialize();
     }
 
     public TipsView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initialize();
     }
 
     public TipsView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        initialize();
     }
 
-    private void init() {
+    private void initialize() {
         setBackgroundColor(Color.TRANSPARENT);
         path = new Path();
 
@@ -79,11 +88,14 @@ public class TipsView extends FrameLayout {
         paint.setColor(color);
     }
 
+    /**
+     * 计算贝塞尔曲线
+     */
     private void calculate() {
         float distance = (float) Math.sqrt(Math.pow(y - startY, 2) + Math.pow(x - startX, 2));
         radius = -distance / 15 + DEFAULT_RADIUS;
 
-        if (radius < 7) {
+        if (radius < 5) {
             isTrigger = true;
         } else {
             isTrigger = false;
@@ -126,8 +138,12 @@ public class TipsView extends FrameLayout {
         super.onDraw(canvas);
     }
 
-    public void attach(final View attachView, Listener listener) {
-        attach(attachView, new Func<View>() {
+    public void attach(final View attachView) {
+        attach(attachView, null);
+    }
+
+    public void attach(final View attachView, DragListener dragListener) {
+        attach(attachView, new ViewCreator<View>() {
             @Override
             public View invoke() {
                 Bitmap bm = view2Bitmap(attachView);
@@ -135,10 +151,12 @@ public class TipsView extends FrameLayout {
                 iv.setImageBitmap(bm);
                 return iv;
             }
-        }, listener);
+        }, dragListener);
     }
 
-    public void attach(final View attachView, final Func<View> copyViewCreator, final Listener listener) {
+    public void attach(final View attachView, final ViewCreator<View> copyViewCreator, final DragListener dragListener) {
+        bringToFront();
+
         attachView.setOnTouchListener(new OnTouchListener() {
             protected void init() {
                 int[] attachLocation = new int[2];
@@ -156,13 +174,16 @@ public class TipsView extends FrameLayout {
 
                 tipImageView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 TipsView.this.addView(tipImageView);
-                tipImageView.measure(0,0);
+                tipImageView.measure(0, 0);
 
                 tipImageView.setX(startX - tipImageView.getMeasuredWidth() / 2);
                 tipImageView.setY(startY - tipImageView.getMeasuredHeight() / 2);
 
-                if (listener != null) {
-                    listener.onStart();
+                attachView.setVisibility(INVISIBLE);
+                requestDisallowInterceptTouchEvent(attachView);
+
+                if (dragListener != null) {
+                    dragListener.onStart();
                 }
             }
 
@@ -177,14 +198,16 @@ public class TipsView extends FrameLayout {
                     isTouch = true;
                     int[] location = new int[2];
                     TipsView.this.getLocationOnScreen(location);
-                    thisX = location[0];
-                    thisY = location[1];
+                    locationX = location[0];
+                    locationY = location[1];
 
                     invalidate();
                     return true;
                 }
+
                 if (!isTouch)
                     return false;
+
                 if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                     isTouch = false;
                     destory();
@@ -194,28 +217,33 @@ public class TipsView extends FrameLayout {
                             @Override
                             public void run() {
                                 isTrigger = false;
-                                if (listener != null) {
-                                    listener.onComplete();
+                                if (dragListener != null) {
+                                    dragListener.onComplete();
                                 }
                             }
                         }, 1000);
+
+                        /**
+                         * 在释放位置显示消除动画
+                         */
                         exploredImageView.setX(x - exploredImageView.getWidth() / 2);
                         exploredImageView.setY(y - exploredImageView.getHeight() / 2);
                         exploredImageView.setVisibility(View.VISIBLE);
-                        exploredImageView.setImageResource(R.drawable.tips_bubble);
                         ((AnimationDrawable) exploredImageView.getDrawable()).stop();
                         ((AnimationDrawable) exploredImageView.getDrawable()).start();
+
                     } else {
-                        if (listener != null) {
-                            listener.onCancel();
+                        attachView.setVisibility(VISIBLE);
+                        if (dragListener != null) {
+                            dragListener.onCancel();
                         }
                     }
                 }
 
-                anchorX = (event.getRawX() - thisX + startX) / 2;
-                anchorY = (event.getRawY() - thisY + startY) / 2;
-                x = event.getRawX() - thisX;
-                y = event.getRawY() - thisY;
+                anchorX = (event.getRawX() - locationX + startX) / 2;
+                anchorY = (event.getRawY() - locationY + startY) / 2;
+                x = event.getRawX() - locationX;
+                y = event.getRawY() - locationY;
 
                 tipImageView.setX(x - tipImageView.getWidth() / 2);
                 tipImageView.setY(y - tipImageView.getHeight() / 2);
@@ -226,20 +254,43 @@ public class TipsView extends FrameLayout {
         });
     }
 
-    public static Bitmap view2Bitmap(View v) {
+    /**
+     * 用于拦截其 parent 的touch事件
+     * @param view
+     */
+    protected void requestDisallowInterceptTouchEvent(View view){
+        if(view.getParent() instanceof ViewGroup) {
+            ViewGroup parent = (ViewGroup)view.getParent();
+            if (parent instanceof ListView
+                    || parent instanceof ScrollView) {
+                parent.requestDisallowInterceptTouchEvent(true);
+            }
+            if (parent != null || parent.getId() != android.R.id.content ) {
+                requestDisallowInterceptTouchEvent(parent);
+            }
+        }
+    }
+
+    /**
+     * View 转 bitmap
+     * @param v
+     * @return
+     */
+    public static Bitmap view2Bitmap(final View v) {
         Bitmap bm = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bm);
         v.draw(canvas);
         return bm;
     }
 
-
-
-    public interface Func<Tresult> {
+    public interface ViewCreator<Tresult> {
         Tresult invoke();
     }
 
-    public static interface Listener {
+    /**
+     * 拖动监听接口
+     */
+    public interface DragListener {
         void onStart();
 
         void onComplete();
@@ -247,15 +298,24 @@ public class TipsView extends FrameLayout {
         void onCancel();
     }
 
-    public static TipsView init(Context context,FrameLayout rootView) {
-        TipsView tipsView = new TipsView(context);
-        rootView.addView(tipsView,ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-        return tipsView;
+    /**
+     * 用于页面复用管理
+     */
+    public static TipsView instance;
+    public static TipsView create(final Activity activity) {
+        if(instance!=null && instance.getTag() == activity){
+            return instance;
+        }
+        instance = new TipsView(activity);
+        instance.setTag(activity);
+        ViewGroup.LayoutParams vlp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        activity.addContentView(instance,vlp) ;
+        return instance;
     }
 
-    public static TipsView init(Context context,RelativeLayout rootView) {
-        TipsView tipsView = new TipsView(context);
-        rootView.addView(tipsView,ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-        return tipsView;
+    public static void destroy(final Activity activity){
+        if(instance!=null && instance.getTag() == activity) {
+            instance = null;
+        }
     }
 }

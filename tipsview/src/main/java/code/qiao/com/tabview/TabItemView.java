@@ -6,13 +6,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class TabItemView extends ViewGroup{
+public class TabItemView extends ViewGroup {
     private ItemView itemView;
-    private NotifyView notifyView;
+    private DotView dotView;
 
     public TabItemView(Context context, int resId, String text, int num){
         super(context);
-        initWithAttr(context,null);
+        setPadding(0,0,0,0);
+        addView(new ItemView(context, text, resId));
+        addView(new DotView(context));
+        setNotifyNum(num);
     }
 
     public TabItemView(Context context, AttributeSet attrs){
@@ -22,17 +25,19 @@ public class TabItemView extends ViewGroup{
 
     private void initWithAttr(Context context, AttributeSet attrs){
         setPadding(0,0,0,0);
-        addView(new ItemView(context,attrs));
-        addView(new NotifyView(context));
+        addView(new ItemView(context, attrs));
+        addView(new DotView(context));
     }
 
     @Override
     public void addView(View child, int index, LayoutParams params) {
+        if(getChildCount()>2) return;
+
         if(child instanceof ItemView){
             this.itemView = (ItemView)child;
             super.addView(child,index,params);
-        }else if(child instanceof NotifyView) {
-            this.notifyView = (NotifyView) child;
+        }else if(child instanceof DotView) {
+            this.dotView = (DotView) child;
             super.addView(child,index,params);
         }
     }
@@ -47,22 +52,26 @@ public class TabItemView extends ViewGroup{
         Point point = itemView.getIconRightTop();
         int noheight = itemView.getBitmapWidth()/2;
         int nowidth = width - point.x + noheight/2;
-        measureChild(notifyView,MeasureSpec.makeMeasureSpec(nowidth,MeasureSpec.AT_MOST),MeasureSpec.makeMeasureSpec(noheight,MeasureSpec.EXACTLY));
+        measureChild(dotView, MeasureSpec.makeMeasureSpec(nowidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(noheight, MeasureSpec.EXACTLY));
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        itemView.layout(0 ,0,itemView.getMeasuredWidth(),getMeasuredHeight());
+        itemView.layout(0, 0, itemView.getMeasuredWidth(), getMeasuredHeight());
 
         int left  = itemView.getPaddingLeft(), top = itemView.getPaddingTop();
         Point point = itemView.getIconRightTop();
-        int noheight = notifyView.getMeasuredHeight();
+        int noheight = dotView.getMeasuredHeight();
         int nleft = left+point.x-noheight/2;
-        notifyView.layout(nleft,top,nleft+notifyView.getMeasuredWidth(),top+notifyView.getMeasuredHeight());
+        dotView.layout(nleft, top, nleft + dotView.getMeasuredWidth(), top + dotView.getMeasuredHeight());
     }
 
-    public View getNotifyView(){
-        return this.notifyView;
+    public void setItem(String text,int resId){
+
+    }
+
+    public View getDotView(){
+        return this.dotView;
     }
 
     /**
@@ -72,12 +81,12 @@ public class TabItemView extends ViewGroup{
      */
     public void setNotifyNum(int num){
         if(num>0){
-            notifyView.setText(""+num);
+            dotView.setText(""+num);
         }else if(num < 0){
-            notifyView.setText("");
+            dotView.setText("");
         }else{
-            notifyView.setText(null);
-            notifyView.setVisibility(INVISIBLE);
+            dotView.setText(null);
+            dotView.setVisibility(INVISIBLE);
         }
     }
 
