@@ -1,18 +1,17 @@
 # QQTipsView
 仿QQ消息未读拖拽清除，“一键退朝”，“一键清除未读”，“一键下班”
 
-简易效果展示：（包含tab滑动切换变色效果）
+*简易效果展示：（包含tab滑动切换变色效果）*
 
 ![演示界面](screenshot/TipsDemo.gif)
 
 # 版本更新
 ``v1.2`` 
-	不用再传入TipsView 作为根布局，直接传Activity 即可；
-	已对拖动时刻View显示做处理，无需额外关注拖拽事件；
-	默认拖拽拦截可滑动父ViewGroup手势事件，可以直接在 ScrollView/ListView等中使用。
+- 不用再传入TipsView 作为根布局，直接传Activity 即可；
+- 已对拖动时刻View显示做处理，无需额外关注拖拽事件；
+- 默认拖拽拦截可滑动父ViewGroup手势事件，可以直接在 ScrollView/ListView等中使用。
 
-
-- ##使用（V1.0）
+##使用
 　　开袋即食。直接在要使用的地方调用
 
 ``` 
@@ -23,7 +22,7 @@
  so easy..
 
 
-- ##方法说明
+##方法说明
 ```
     //缺省方法
     attach(final View attachView, Listener listener)
@@ -64,4 +63,4 @@ new TipsView.Listener(){
 ```
 实现上述接口便可以达到类似QQ拖动清除效果。
 
-[旧版说明][screenshot/oldme.md]
+[旧版说明](screenshot/oldme.md)
