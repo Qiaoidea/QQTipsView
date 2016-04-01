@@ -10,12 +10,11 @@ public class TabItemView extends ViewGroup {
     private ItemView itemView;
     private DotView dotView;
 
-    public TabItemView(Context context, int resId, String text, int num){
+    public TabItemView(Context context, int resId, String text){
         super(context);
         setPadding(0,0,0,0);
         addView(new ItemView(context, text, resId));
         addView(new DotView(context));
-        setNotifyNum(num);
     }
 
     public TabItemView(Context context, AttributeSet attrs){

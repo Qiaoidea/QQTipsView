@@ -2,7 +2,6 @@ package code.qiao.com.slide;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -124,7 +123,7 @@ public class SlideLayout extends LinearLayout {
 				case MotionEvent.ACTION_MOVE:
 					if (touchState == TOUCH_STATE_REST) {
 						boolean isInside = canSide(ev.getX() - downMotionX);
-						Log.e("OutSide.....currX:" + getScrollX(), "resut: " + isInside);
+//						Log.e("OutSide.....currX:" + getScrollX(), "resut: " + isInside);
 						getParent().requestDisallowInterceptTouchEvent(isInside);
 					}
 					break;
@@ -149,9 +148,8 @@ public class SlideLayout extends LinearLayout {
 	private boolean canSide(float distance) {
 		final float currX = getScrollX();
 		final int maxX = getChildAt(getChildCount() - 1).getRight() - getChildAt(0).getWidth();
-//		Log.e("OutSide.....currX:"+getScrollX(),String.format("distance:%s , newX:%s , maxX :%s",distance,currX,maxX));
-		return  distance<0 && currX <maxX
-				||  distance>0 && currX>0;
+		return  (distance<0 && currX <maxX)
+				||  (distance>0 && currX>0);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class DotView extends View {
 
     private Rect mIconRect;
 
-    private String mText="99+";
+    private String mText;
     private Paint mTextPaint;
     private Rect mTextBound = new Rect();
 

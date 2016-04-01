@@ -15,12 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ScrollView;
 
 public class TipsView extends FrameLayout {
 
-    public static final float DEFAULT_RADIUS = 25;
+    public static final float DEFAULT_RADIUS = 20;
 
     private Paint paint;
     private Path path;
@@ -180,7 +178,7 @@ public class TipsView extends FrameLayout {
                 tipImageView.setY(startY - tipImageView.getMeasuredHeight() / 2);
 
                 attachView.setVisibility(INVISIBLE);
-                requestDisallowInterceptTouchEvent(attachView);
+                requestDisallowInterceptTouchEvent(attachView,true);
 
                 if (dragListener != null) {
                     dragListener.onStart();
@@ -211,6 +209,8 @@ public class TipsView extends FrameLayout {
                 if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                     isTouch = false;
                     destory();
+
+                    requestDisallowInterceptTouchEvent(attachView,false);
 
                     if (isTrigger) {
                         postDelayed(new Runnable() {
@@ -258,16 +258,10 @@ public class TipsView extends FrameLayout {
      * 用于拦截其 parent 的touch事件
      * @param view
      */
-    protected void requestDisallowInterceptTouchEvent(View view){
+    protected void requestDisallowInterceptTouchEvent(View view,boolean isDisallow){
         if(view.getParent() instanceof ViewGroup) {
             ViewGroup parent = (ViewGroup)view.getParent();
-            if (parent instanceof ListView
-                    || parent instanceof ScrollView) {
-                parent.requestDisallowInterceptTouchEvent(true);
-            }
-            if (parent != null || parent.getId() != android.R.id.content ) {
-                requestDisallowInterceptTouchEvent(parent);
-            }
+            parent.requestDisallowInterceptTouchEvent(isDisallow);
         }
     }
 

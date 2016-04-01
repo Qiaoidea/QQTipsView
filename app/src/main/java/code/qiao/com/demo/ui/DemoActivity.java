@@ -32,6 +32,11 @@ public class DemoActivity extends AppCompatActivity{
                         .add(R.drawable.tab4, "我", TabFragment.class)
                         .build());
         tabLayout.setViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(3);
+
+        for(int i=0;i<4;i++) {
+            tabLayout.setTabtips(i,(int)(Math.random()*99));
+        }
     }
 
     @Override

@@ -49,7 +49,7 @@ public class TabLayout extends LinearLayout implements View.OnClickListener,View
             for (int i = 0; i < adapter.getCount(); i++) {
                 TabItemView tabView = new TabItemView(getContext(),
                         ((FragmentPagerItemAdapter) adapter).getPageIconRes(i),
-                        adapter.getPageTitle(i).toString(),(int)(Math.random()*99));
+                        adapter.getPageTitle(i).toString());
 
                 tabView.setOnClickListener(this);
                 TipsView.create((Activity) getContext()).attach(tabView.getDotView());
@@ -60,6 +60,12 @@ public class TabLayout extends LinearLayout implements View.OnClickListener,View
                 addView(tabView,llp);
             }
             ((TabItemView)getChildAt(0)).setIconAlpha(1f);
+        }
+    }
+
+    public void setTabtips(int position,int tipNumber){
+        if(position < getChildCount()){
+            ((TabItemView)getChildAt(position)).setNotifyNum(tipNumber);
         }
     }
 
@@ -74,7 +80,6 @@ public class TabLayout extends LinearLayout implements View.OnClickListener,View
     }
 
     private int mScrollState;
-
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (positionOffset > 0){

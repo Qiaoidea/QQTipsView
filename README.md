@@ -2,56 +2,26 @@
 仿QQ消息未读拖拽清除，“一键退朝”，“一键清除未读”，“一键下班”
 
 简易效果展示：（包含tab滑动切换变色效果）
-![演示界面](https://raw.githubusercontent.com/Qiaoidea/QQTipsView/master/QQTips_demo.gif)
 
-# 如何使用
-- ##导入
-1.直接导入tipsview至项目作为库/（或直接引入到自己项目）
-	（1）Android Studio 在项目 build.gradle 中配置
->  compile project(":tipsview")
-	
-	（2）eclipse 直接 add library（或在 project.properties 配置）
->  android.library.reference.1=../tipsview
+![演示界面](screenshot/TipsDemo.gif)
+
+# 版本更新
+``v1.2`` 
+	不用再传入TipsView 作为根布局，直接传Activity 即可；
+	已对拖动时刻View显示做处理，无需额外关注拖拽事件；
+	默认拖拽拦截可滑动父ViewGroup手势事件，可以直接在 ScrollView/ListView等中使用。
 
 
-- ##使用
-1.将TipsView添加至layout.xml 布局最顶层
+- ##使用（V1.0）
+　　开袋即食。直接在要使用的地方调用
 
 ``` 
-<code.qiao.com.tipsview.TipsView
-        android:id="@+id/tip"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+ TipsView.create(activity)
+            .attach(view , TipsView.DragListener);
 ```
- 或者
-```
-rootView.addView(tipview, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-```
+ 
+ so easy..
 
-2.关联至指定可拖动view,并实现拖动响应事件
-```
- tipsView.attach(targetView, new TipsView.Listener(){
-                @Override
-                public void onStart() {
-                    targetView.setVisibility(View.INVISIBLE);
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-
-                @Override
-                public void onCancel() {
-                    targetView.setVisibility(View.VISIBLE);
-                }
-            });
-```
-**如果是添加在listView的item中，记得在onStart()方法中调用**
-```
-//当requestDisallowInterceptTouchEvent 参数为true的时候 它不会拦截其子控件的 触摸事件
-listView.requestDisallowInterceptTouchEvent(true);
-```
 
 - ##方法说明
 ```
@@ -93,3 +63,5 @@ new TipsView.Listener(){
             });
 ```
 实现上述接口便可以达到类似QQ拖动清除效果。
+
+[旧版说明][screenshot/oldme.md]
