@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import code.qiao.com.demo.R;
 import code.qiao.com.demo.tab.FragmentPagerItemAdapter;
 import code.qiao.com.demo.tab.TabLayout;
-import code.qiao.com.tipsview.TipsView;
 
 
 public class DemoActivity extends AppCompatActivity{
@@ -41,7 +40,6 @@ public class DemoActivity extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {
-        TipsView.destroy(this);
         super.onDestroy();
     }
 }

@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.lang.ref.WeakReference;
+
 public class TipsView extends FrameLayout {
 
     public static final float DEFAULT_RADIUS = 20;
@@ -295,21 +297,15 @@ public class TipsView extends FrameLayout {
     /**
      * 用于页面复用管理
      */
-    public static TipsView instance;
+    private static WeakReference<TipsView> instance;
     public static TipsView create(final Activity activity) {
-        if(instance!=null && instance.getTag() == activity){
-            return instance;
+        if(instance!=null && instance.get()!=null && instance.get().getTag() == activity){
+            return instance.get();
         }
-        instance = new TipsView(activity);
-        instance.setTag(activity);
+        instance = new WeakReference<>(new TipsView(activity));
+        instance.get().setTag(activity);
         ViewGroup.LayoutParams vlp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        activity.addContentView(instance,vlp) ;
-        return instance;
-    }
-
-    public static void destroy(final Activity activity){
-        if(instance!=null && instance.getTag() == activity) {
-            instance = null;
-        }
+        activity.addContentView(instance.get(),vlp) ;
+        return instance.get();
     }
 }
